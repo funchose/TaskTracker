@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.study.tracker.model.Task;
 import org.study.tracker.payload.AddTaskRequest;
+import org.study.tracker.payload.EditTaskRequest;
 import org.study.tracker.service.TaskService;
 
 import java.util.List;
@@ -24,5 +25,11 @@ public class TaskController {
   @PostMapping
   ResponseEntity<Task> createTask(@RequestBody AddTaskRequest request) {
     return ResponseEntity.ok(taskService.createTask(request));
+  }
+
+  @PutMapping("/{taskId}")
+  ResponseEntity<Task> editTask(Long taskId, @RequestBody EditTaskRequest request) {
+    var result = taskService.editTask(taskId, request.getName(), request.getPerformerId(), request.getDescription(), request.getDeadline(), request.getStatus());
+    return result.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
   }
 }

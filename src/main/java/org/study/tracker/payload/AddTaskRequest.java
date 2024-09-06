@@ -6,10 +6,14 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import org.study.tracker.Status;
 
+import java.time.ZonedDateTime;
+
 public class AddTaskRequest {
   @NotNull
   @Column(name = "author_id")
   private Long authorId;
+  @Column(name = "performer_id")
+  private Long performerId;
   @NotNull(message = "Task name cannot be null")
   @NotEmpty(message = "Task name cannot be empty")
   private String name;
@@ -17,33 +21,50 @@ public class AddTaskRequest {
   @NotEmpty(message = "Task description cannot be empty")
   private String description;
   private Status status;
+  private ZonedDateTime deadline;
 
-  public void setAuthorId(String authorId) {
-    this.authorId = Long.valueOf(authorId);
+  public void setAuthorId(Long authorId) {
+    this.authorId = authorId;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public void setPerformerId(Long performerId) {
+    this.performerId = performerId;
   }
 
-  public void setDescription(String description) {
-    this.description = description;
+  public Long getPerformerId() {
+    return performerId;
   }
 
-  public Status getStatus() {
-    return status;
+  public void setDeadline(ZonedDateTime deadline) {
+    this.deadline = deadline;
   }
 
-  public void setStatus(Status status) {
-    this.status = status;
+  public ZonedDateTime getDeadline() {
+    return deadline;
   }
 
   public Long getAuthorId() {
     return authorId;
   }
 
+  public void setName(String name) {
+    this.name = name;
+  }
+
   public String getName() {
     return name;
+  }
+
+  public void setStatus(Status status) {
+    this.status = status;
+  }
+
+  public Status getStatus() {
+    return status;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
   }
 
   public String getDescription() {
