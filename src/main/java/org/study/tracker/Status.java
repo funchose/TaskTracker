@@ -1,6 +1,5 @@
 package org.study.tracker;
 
-//@Embeddable
 public enum Status {
   OPEN("OPEN"),
   IN_PROGRESS("IN_PROGRESS"),

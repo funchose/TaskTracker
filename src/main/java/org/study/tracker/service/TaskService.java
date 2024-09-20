@@ -29,7 +29,7 @@ public class TaskService {
     //return Optional.of(taskRepository.save(new Task(taskId, name, performerId, description, deadline, status)));
     Task newTask = new Task();
     newTask.setCreationDate(task.get().getCreationDate());
-    newTask.setTaskId(task.get().getId());
+    newTask.setTaskId(task.get().getTaskId());
     newTask.setAuthorId(task.get().getAuthorId());
     if (name != null) {
       newTask.setName(name);
