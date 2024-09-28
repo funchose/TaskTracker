@@ -1,24 +1,21 @@
 package org.study.tracker.payload;
 
 
-import jakarta.persistence.Column;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.study.tracker.Status;
 
 import java.time.ZonedDateTime;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
+@Schema(description = "Add task request")
 public class AddTaskRequest {
   @NotNull
-  @Column(name = "author_id")
   private Long authorId;
-  @Column(name = "performer_id")
   private Long performerId;
   @NotNull(message = "Task name cannot be null")
   @NotEmpty(message = "Task name cannot be empty")

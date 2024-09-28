@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import org.study.tracker.Role;
 import org.study.tracker.security.jwt.AuthTokenFilter;
 import org.study.tracker.service.UserService;
 
@@ -45,9 +46,12 @@ public class SecurityConfiguration {
           return corsConfiguration;
         }))
         .authorizeHttpRequests(request -> request
+
             .requestMatchers("/auth/**").permitAll()
-            .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/swagger-resources/*", "/v3/api-docs/**").permitAll()
-            .requestMatchers("/endpoint", "/admin/**").hasRole("admin")
+            .requestMatchers("/swagger-ui/**", "/swagger-ui.html",
+                "/swagger-resources/*", "/v3/api-docs/**").permitAll()
+            .requestMatchers("/tasks/statistics").hasAuthority(Role.ROLE_PROJECT_MANAGER.getName())
+            .requestMatchers("/endpoint", "/admin/**").hasAuthority(Role.ROLE_ADMIN.getName())
             .anyRequest().authenticated())
         .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
         .authenticationProvider(authenticationProvider())

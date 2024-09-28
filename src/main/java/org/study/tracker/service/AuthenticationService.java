@@ -5,6 +5,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.study.tracker.Role;
 import org.study.tracker.model.User;
 import org.study.tracker.payload.SignInRequest;
 import org.study.tracker.payload.SignUpRequest;
@@ -20,19 +21,13 @@ public class AuthenticationService {
   private final PasswordEncoder passwordEncoder;
   private final AuthenticationManager authenticationManager;
 
-  public JwtResponse signUp(SignUpRequest signUpRequest) {
+  public void signUp(SignUpRequest signUpRequest) {
     var user = User.builder()
         .username(signUpRequest.getUsername())
         .password(passwordEncoder.encode(signUpRequest.getPassword()))
+        .role(Role.ROLE_USER)
         .build();
-//    Set<Role> roles = new HashSet<>();
-//    Role userRole = new Role("user");
-//        .orElseThrow(() -> new RuntimeException("Role not found"));
-//    roles.add(userRole);
-//    user.setRole(userRole);
     userService.create(user);
-    var jwt = jwtService.generateToken(userService.userDetailsService().loadUserByUsername(signUpRequest.getUsername()));
-    return new JwtResponse(jwt);
   }
 
   public JwtResponse signIn(SignInRequest signInRequest) {

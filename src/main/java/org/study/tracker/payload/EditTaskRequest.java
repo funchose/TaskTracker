@@ -1,17 +1,14 @@
 package org.study.tracker.payload;
 
-import jakarta.persistence.Column;
-import lombok.Getter;
-import lombok.Setter;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
 import org.study.tracker.Status;
 
 import java.time.ZonedDateTime;
 
-@Getter
-@Setter
+@Data
+@Schema(description = "Edit task request")
 public class EditTaskRequest {
-
-  @Column(name = "performer_id")
   private Long performerId;
   private String name;
   private String description;

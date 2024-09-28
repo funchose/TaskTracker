@@ -2,41 +2,38 @@ package org.study.tracker.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.study.tracker.Role;
 
 import java.util.Collection;
 import java.util.List;
 
 @Entity
+@Data
 @Builder
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "users")
 public class User implements UserDetails {
   @Id
-  //@NotNull
   @Column(name = "id")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  //@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "Users_id_seq")
-  //@SequenceGenerator(name = "Users_id_seq", sequenceName = "Users_id_seq", allocationSize = 1)
   private Long id;
 
   @NotNull
-  @Column(name = "username")
+  @Column
   private String username;
-  @Column(name = "password")
+  @Column
   private String password;
-  //@Enumerated(EnumType.STRING)
-  //@OneToMany(fetch = FetchType.LAZY)
-  //@JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_name"))
-  //private Set<Role> roles = new HashSet<>()
-  //@NotNull
-  //@Column(name = "role")
-  //private Role role;
+  @Enumerated(EnumType.STRING)
+  @Column
+  private Role role;
 
   @Override
   public boolean isAccountNonExpired() {
@@ -58,13 +55,9 @@ public class User implements UserDetails {
     return UserDetails.super.isEnabled();
   }
 
-
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    //return roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
-    return List.of(
-        //new SimpleGrantedAuthority(role.getName())
-    );
+    return List.of(new SimpleGrantedAuthority(role.toString()));
   }
 
 //  public static UserDetails build(User user) {

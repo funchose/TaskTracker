@@ -2,49 +2,49 @@ package org.study.tracker.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.study.tracker.Status;
-import org.study.tracker.utils.StatusConverter;
 
 import java.time.ZonedDateTime;
 
+@Data
 @Entity
-@Table(name = "tasks")
-@Convert(attributeName = "status", converter = StatusConverter.class)
-@Getter
-@Setter
+@Table(name = "task")
 @NoArgsConstructor
+@AllArgsConstructor
 public class Task {
 
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id")
+  private Long id;
+  @Column(name = "author_id")
+  private Long authorId;
+  @Column(name = "performer_id")
+  private Long performerId;
+  @Column
   private String name;
-
+  @Column
   private String description;
-
+  @Column
   private ZonedDateTime deadline;
-
   @NotNull
+  @Column(name = "creation_date")
   private ZonedDateTime creationDate;
   @Enumerated(EnumType.STRING)
   @Column
   private Status status;
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "task_id")
-  private Long taskId;
-  @Column(name = "author_id")
-  private Long authorId;
-  @Column(name = "performer_id")
-  private Long performerId;
 
-  public Task(Long taskId, Long authorId, String name, String description, ZonedDateTime deadline, Status status, Long performerId) {
+  public Task(Long id, Long authorId, String name, String description, ZonedDateTime deadline, Status status,
+              Long performerId) {
     this.name = name;
     this.description = description;
     this.deadline = deadline;
     this.status = status;
-    this.taskId = taskId;
+    this.id = id;
     this.authorId = authorId;
     this.performerId = performerId;
     this.creationDate = ZonedDateTime.now();

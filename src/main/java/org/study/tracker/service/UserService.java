@@ -27,7 +27,6 @@ public class UserService {
       throw new RuntimeException("This user already exists");
     }
     return save(user);
-    //return userRepository.save(new User(555L, request.getUsername(), request.getPassword()));
   }
 
   public User getByUsername(String username) {
