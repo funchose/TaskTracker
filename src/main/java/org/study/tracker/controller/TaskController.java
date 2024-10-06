@@ -1,6 +1,8 @@
 package org.study.tracker.controller;
 
 
+import static org.study.tracker.Role.ROLE_ADMIN;
+import static org.study.tracker.Role.ROLE_GROUP_MODERATOR;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -14,15 +16,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.study.tracker.Role;
-import static org.study.tracker.Role.ROLE_ADMIN;
-import static org.study.tracker.Role.ROLE_GROUP_MODERATOR;
 import org.study.tracker.model.Task;
 import org.study.tracker.model.User;
 import org.study.tracker.payload.AddTaskRequest;
 import org.study.tracker.payload.EditTaskRequest;
 import org.study.tracker.responses.TaskResponse;
 import org.study.tracker.service.TaskService;
-
 
 @RestController
 @RequiredArgsConstructor
@@ -38,8 +37,8 @@ public class TaskController {
       @ApiResponse(responseCode = "200",
           description = "List of tasks is returned"),
       @ApiResponse(responseCode = "403",
-          description = "You don't have permission to perform this operation. " +
-          "Please, get authorized first"),
+          description = "You don't have permission to perform this operation. "
+              + "Please, get authorized first"),
       @ApiResponse(responseCode = "404",
           description = "No task is created yet, don't hesitate to add a new one!")})
   public List<Task> getTasks() {
@@ -49,12 +48,12 @@ public class TaskController {
   @Transactional
   @PostMapping("/tasks")
   @Operation(summary = "Create a task",
-      description = "Creates a task with non-null author id, name, description, default status" +
-          "(OPEN) and current creation date")
+      description = "Creates a task with non-null author id, name, description, default status"
+          + "(OPEN) and current creation date")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Task is created"),
-      @ApiResponse(responseCode = "403", description = "You don't have permission to perform " +
-          "this operation. Please, get authorized first"),
+      @ApiResponse(responseCode = "403", description = "You don't have permission to perform "
+          + "this operation. Please, get authorized first"),
   })
   TaskResponse createTask(@RequestBody AddTaskRequest request,
                           @AuthenticationPrincipal User user) {
@@ -72,7 +71,8 @@ public class TaskController {
     if (user.getAuthorities().toString().replaceAll("[\\[\\]]", "")
         .contains(Role.ROLE_USER.getName())) {
       var result = taskService.editTaskByUser(id, request.getName(), request.getDescription(),
-          request.getStatus(), user);//if the other fields are changed - return warning about rights
+          request.getStatus(), user);
+      //if the other fields are changed - return warning about rights
       return result.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.badRequest().build());
       //!don't get badrequest (200 instead) when adding performer,
       // even if only this field has been changed
@@ -80,7 +80,7 @@ public class TaskController {
     } else if (user.getAuthorities().toString().replaceAll("[\\[\\]]", "")
         .contains(ROLE_GROUP_MODERATOR.getName())
         || user.getAuthorities().toString().replaceAll("[\\[\\]]", "")
-            .contains(ROLE_ADMIN.getName())) {
+        .contains(ROLE_ADMIN.getName())) {
       var result = taskService.editTaskByModerator(id, request.getName(),
           request.getPerformerId(), request.getDescription(),
           request.getDeadline(), request.getStatus());
