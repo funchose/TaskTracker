@@ -41,6 +41,15 @@ public class Task {
   private Status status;
 
 
+  /**
+   * Creates a task with status OPEN and creation date equal the current moment of time
+   * @param id the task id
+   * @param authorId the task author id (by default - the task creator, can't be changed)
+   * @param name short name of the task
+   * @param description full name of the task or full description what must be done
+   * @param deadline the task due date
+   * @param performerId person who will perform the task
+   */
   public Task(Long id, Long authorId, String name, String description, ZonedDateTime deadline,
               Long performerId) {
     this.name = name;

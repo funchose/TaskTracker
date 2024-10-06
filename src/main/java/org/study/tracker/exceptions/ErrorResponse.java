@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- *
+ * Handles the error responses
  */
 @Data
 @AllArgsConstructor
