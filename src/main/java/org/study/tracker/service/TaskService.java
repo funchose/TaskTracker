@@ -30,15 +30,16 @@ public class TaskService {
 
   @Transactional
   public TaskResponse createTask(AddTaskRequest request, User user) {
-    Task taskForCreate = new Task(null, user.getId(), request.getName(), request.getDescription(),
-        request.getDeadline(), request.getPerformerId());
+    Task taskForCreate = new Task(null, user.getId(), request.getName(),
+        request.getDescription(), request.getDeadline(), request.getPerformerId());
     var task = taskRepository.save(taskForCreate);
     return new TaskResponse(task.getId());
   }
 
   @Transactional
-  public Optional<TaskResponse> editTaskByModerator(Long taskId, String name, Long performerId, String description,
-                                                    ZonedDateTime deadline, Status status) {
+  public Optional<TaskResponse> editTaskByModerator(Long taskId, String name, Long performerId,
+                                                    String description, ZonedDateTime deadline,
+                                                    Status status) {
     Optional<Task> taskForEdit = taskRepository.findById(taskId);
     Task newTask = new Task();
     newTask.setCreationDate(taskForEdit.get().getCreationDate());
@@ -74,7 +75,8 @@ public class TaskService {
   }
 
   @Transactional
-  public Optional<TaskResponse> editTaskByUser(Long taskId, String name, String description, Status status, User user) {
+  public Optional<TaskResponse> editTaskByUser(Long taskId, String name, String description,
+                                               Status status, User user) {
     Optional<Task> taskForEdit = taskRepository.findById(taskId);
     if (!taskForEdit.get().getAuthorId().equals(user.getId())) {
       return Optional.empty();
@@ -117,7 +119,8 @@ public class TaskService {
     });
     for (Status status : statisticsCollector.getStatusSet()) {
       dataLines.add(new String[]{
-          "Status: " + status.name() + ", tasks: " + taskRepository.findByStatus(status).stream().count() + "\n"
+          "Status: " + status.name() + ", tasks: " + taskRepository.findByStatus(status)
+              .stream().count() + "\n"
       });
     }
     statisticsCollector.csvOutput(dataLines);
@@ -125,7 +128,8 @@ public class TaskService {
 
   @Transactional
   public TaskResponse deleteTask(Long id) {
-    Task taskForDelete = taskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
+    Task taskForDelete = taskRepository.findById(id)
+        .orElseThrow(() -> new TaskNotFoundException(id));
     taskRepository.delete(taskForDelete);
     return new TaskResponse(id);
   }

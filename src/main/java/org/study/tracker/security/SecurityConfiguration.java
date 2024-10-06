@@ -50,8 +50,10 @@ public class SecurityConfiguration {
             .requestMatchers("/auth/**").permitAll()
             .requestMatchers("/swagger-ui/**", "/swagger-ui.html",
                 "/swagger-resources/*", "/v3/api-docs/**").permitAll()
-            .requestMatchers("/tasks/statistics").hasAuthority(Role.ROLE_PROJECT_MANAGER.getName())
-            .requestMatchers("/endpoint", "/admin/**").hasAuthority(Role.ROLE_ADMIN.getName())
+            .requestMatchers("/tasks/statistics")
+            .hasAuthority(Role.ROLE_PROJECT_MANAGER.getName())
+            .requestMatchers("/endpoint", "/admin/**")
+            .hasAuthority(Role.ROLE_ADMIN.getName())
             .anyRequest().authenticated())
         .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
         .authenticationProvider(authenticationProvider())
@@ -73,7 +75,8 @@ public class SecurityConfiguration {
   }
 
   @Bean
-  public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+  public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig)
+      throws Exception {
     return authConfig.getAuthenticationManager();
   }
 }

@@ -62,7 +62,8 @@ public class User implements UserDetails {
   }
 
 //  public static UserDetails build(User user) {
-//    List<GrantedAuthority> authorities = (List<GrantedAuthority>) user.getAuthorities().stream().toList();
+//    List<GrantedAuthority> authorities = (List<GrantedAuthority>) user.getAuthorities()
+//    .stream().toList();
 //    return new UserDetails(user.getId(),
 //        user.getUsername(), user.getPassword(), authorities);
 //  }

@@ -41,7 +41,8 @@ public class Task {
   private Status status;
 
 
-  public Task(Long id, Long authorId, String name, String description, ZonedDateTime deadline, Long performerId) {
+  public Task(Long id, Long authorId, String name, String description, ZonedDateTime deadline,
+              Long performerId) {
     this.name = name;
     this.description = description;
     this.deadline = deadline;
