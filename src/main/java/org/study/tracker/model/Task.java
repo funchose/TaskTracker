@@ -42,7 +42,8 @@ public class Task {
 
 
   /**
-   * Creates a task with status OPEN and creation date equal the current moment of time
+   * Creates a task with status OPEN and creation date equal the current moment of time.
+   *
    * @param id the task id
    * @param authorId the task author id (by default - the task creator, can't be changed)
    * @param name short name of the task
