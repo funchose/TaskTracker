@@ -1,6 +1,7 @@
 package org.study.tracker.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,8 +25,10 @@ public class Task {
   private Long authorId;
   @Column(name = "performer_id")
   private Long performerId;
+  @NotBlank(message = "Task name is required")
   @Column
   private String name;
+  @NotBlank(message = "Task description is required")
   @Column
   private String description;
   @Column
@@ -38,12 +41,11 @@ public class Task {
   private Status status;
 
 
-  public Task(Long id, Long authorId, String name, String description, ZonedDateTime deadline, Status status,
-              Long performerId) {
+  public Task(Long id, Long authorId, String name, String description, ZonedDateTime deadline, Long performerId) {
     this.name = name;
     this.description = description;
     this.deadline = deadline;
-    this.status = status;
+    this.status = Status.OPEN;
     this.id = id;
     this.authorId = authorId;
     this.performerId = performerId;

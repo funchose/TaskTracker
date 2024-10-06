@@ -1,7 +1,7 @@
 package org.study.tracker.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,9 +26,10 @@ public class User implements UserDetails {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @NotNull
+  @NotBlank(message = "Username is required")
   @Column
   private String username;
+  @NotBlank(message = "Password is required")
   @Column
   private String password;
   @Enumerated(EnumType.STRING)

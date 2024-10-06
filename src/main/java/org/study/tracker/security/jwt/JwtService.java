@@ -35,7 +35,7 @@ public class JwtService {
     Map<String, Object> claims = new HashMap<>();
     if (userDetails instanceof User customUserDetails) {
       claims.put("id", customUserDetails.getId());
-      //claims.put("role", customUserDetails.getRole());
+      claims.put("role", customUserDetails.getRole());
     }
     return generateToken(claims, userDetails);
   }
@@ -51,7 +51,7 @@ public class JwtService {
   }
 
   public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
-    int jwtExpirationMs = 1000000 + 60 * 24;
+    int jwtExpirationMs = 3000000 + 60 * 24;
     return Jwts.builder().claims(extraClaims).subject(userDetails.getUsername())
         .issuedAt(new Date(System.currentTimeMillis()))
         .expiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
@@ -67,8 +67,11 @@ public class JwtService {
   }
 
   private Claims extractAllClaims(String token) {
-    return Jwts.parser().setSigningKey(getSigningKey()).build()
-        .parseClaimsJws(token).getBody();
+    return Jwts.parser()
+        .setSigningKey(getSigningKey())
+        .build()
+        .parseClaimsJws(token)
+        .getBody();
   }
 
   private Key getSigningKey() {
