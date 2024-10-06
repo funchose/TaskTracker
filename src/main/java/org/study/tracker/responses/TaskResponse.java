@@ -1,9 +1,15 @@
 package org.study.tracker.responses;
 
-import org.study.tracker.model.Task;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-public class TaskResponse extends Task {
+@NoArgsConstructor
+@Data
+public class TaskResponse {
+  private Long id;
+
   public TaskResponse(Long id) {
     setId(id);
   }
+
 }
