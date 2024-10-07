@@ -1,8 +1,6 @@
 package org.study.tracker.controller;
 
 
-import static org.study.tracker.Role.ROLE_ADMIN;
-import static org.study.tracker.Role.ROLE_GROUP_MODERATOR;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -16,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.study.tracker.Role;
+import static org.study.tracker.Role.ROLE_ADMIN;
+import static org.study.tracker.Role.ROLE_GROUP_MODERATOR;
 import org.study.tracker.model.Task;
 import org.study.tracker.model.User;
 import org.study.tracker.payload.AddTaskRequest;
@@ -57,7 +57,7 @@ public class TaskController {
   })
   TaskResponse createTask(@RequestBody AddTaskRequest request,
                           @AuthenticationPrincipal User user) {
-    return taskService.createTask(request, user);
+    return taskService.createTask(request, user.getId());
   }
 
   @Transactional
@@ -71,7 +71,7 @@ public class TaskController {
     if (user.getAuthorities().toString().replaceAll("[\\[\\]]", "")
         .contains(Role.ROLE_USER.getName())) {
       var result = taskService.editTaskByUser(id, request.getName(), request.getDescription(),
-          request.getStatus(), user);
+          request.getStatus(), user.getId());
       //if the other fields are changed - return warning about rights
       return result.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.badRequest().build());
       //!don't get badrequest (200 instead) when adding performer,
@@ -98,15 +98,27 @@ public class TaskController {
   }
 
   @Transactional
-  @ApiResponses(value = {
-//      @ApiResponse(responseCode = "200",
-//      description = "Task is created"),
-//      @ApiResponse(responseCode = "403",
-//      description = "You don't have permission to perform this operation. " +
-//          "Please, get authorized first"),
-  })
   @DeleteMapping("tasks/{id}")
-  TaskResponse deleteTask(@PathVariable Long id) {
-    return taskService.deleteTask(id);
+  @Operation(summary = "Delete a task with id",
+      description = "Deleting the task with the required id",
+      responses = @ApiResponse(responseCode = "200", description = "Task is deleted"))
+  ResponseEntity<TaskResponse> deleteTask(@PathVariable Long id,
+                                          @AuthenticationPrincipal User user) {
+    if (user.getAuthorities().toString().replaceAll("[\\[\\]]", "")
+        .contains(Role.ROLE_USER.getName())) {
+      var taskForDelete = taskService.deleteTaskByUser(id, user.getId());
+      return taskForDelete.map(ResponseEntity::ok)
+          .orElseGet(() -> ResponseEntity.badRequest().build());
+    } else if (user.getAuthorities().toString().replaceAll("[\\[\\]]", "")
+        .contains(ROLE_GROUP_MODERATOR.getName())
+        || user.getAuthorities().toString().replaceAll("[\\[\\]]", "")
+        .contains(ROLE_ADMIN.getName())) {
+      var taskForDelete = taskService.deleteTaskByModerator(id);
+      return taskForDelete.map(ResponseEntity::ok)
+          .orElseGet(() -> ResponseEntity.badRequest().build());
+    } else {
+      TaskResponse taskResponse = new TaskResponse();
+      return new ResponseEntity<>(taskResponse, HttpStatus.BAD_REQUEST);
+    }
   }
 }

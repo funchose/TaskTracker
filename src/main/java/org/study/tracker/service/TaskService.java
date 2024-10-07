@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.study.tracker.Status;
 import org.study.tracker.exceptions.TaskNotFoundException;
 import org.study.tracker.model.Task;
-import org.study.tracker.model.User;
 import org.study.tracker.payload.AddTaskRequest;
 import org.study.tracker.repository.TaskRepository;
 import org.study.tracker.responses.TaskResponse;
@@ -29,8 +28,8 @@ public class TaskService {
   }
 
   @Transactional
-  public TaskResponse createTask(AddTaskRequest request, User user) {
-    Task taskForCreate = new Task(null, user.getId(), request.getName(),
+  public TaskResponse createTask(AddTaskRequest request, Long userId) {
+    Task taskForCreate = new Task(null, userId, request.getName(),
         request.getDescription(), request.getDeadline(), request.getPerformerId());
     var task = taskRepository.save(taskForCreate);
     return new TaskResponse(task.getId());
@@ -76,9 +75,9 @@ public class TaskService {
 
   @Transactional
   public Optional<TaskResponse> editTaskByUser(Long taskId, String name, String description,
-                                               Status status, User user) {
+                                               Status status, Long userId) {
     Optional<Task> taskForEdit = taskRepository.findById(taskId);
-    if (!taskForEdit.get().getAuthorId().equals(user.getId())) {
+    if (!taskForEdit.get().getAuthorId().equals(userId)) {
       return Optional.empty();
     }
     Task newTask = new Task();
@@ -127,10 +126,22 @@ public class TaskService {
   }
 
   @Transactional
-  public TaskResponse deleteTask(Long id) {
+  public Optional<TaskResponse> deleteTaskByUser(Long id, Long userId) {
+    Task taskForDelete = taskRepository.findById(id)
+        .orElseThrow(() -> new TaskNotFoundException(id));
+    if (taskForDelete.getAuthorId().equals(userId)) {
+      taskRepository.delete(taskForDelete);
+      return Optional.of(new TaskResponse(id));
+    }
+    else {
+      return Optional.empty();
+    }
+  }
+  @Transactional
+  public Optional<TaskResponse> deleteTaskByModerator(Long id) {
     Task taskForDelete = taskRepository.findById(id)
         .orElseThrow(() -> new TaskNotFoundException(id));
     taskRepository.delete(taskForDelete);
-    return new TaskResponse(id);
+    return Optional.of(new TaskResponse(id));
   }
 }
