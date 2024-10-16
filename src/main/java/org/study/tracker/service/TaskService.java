@@ -142,7 +142,7 @@ public class TaskService {
       newTask.setDeadline(taskForEdit.getDeadline());
     }
     taskRepository.save(newTask);
-    return Optional.of(new TaskResponse(newTask.getId())); //return edited task id
+    return Optional.of(new TaskResponse(newTask.getId()));
   }
 
   @Transactional

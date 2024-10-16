@@ -11,4 +11,5 @@ import java.util.Optional;
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Long> {
   List<Optional<Task>> findByStatus(Status status);
+  Task findByName(String name);
 }

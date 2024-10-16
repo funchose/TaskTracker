@@ -1,5 +1,6 @@
 package org.study.tracker.exceptions;
 
+import jakarta.validation.UnexpectedTypeException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,6 +78,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(),
         exception.getMessage());
     logger.debug("Data is invalid");
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+  }
+
+  @ExceptionHandler(UnexpectedTypeException.class)
+  public ResponseEntity<ErrorResponse>
+  handleUnexpectedTypeException(UnexpectedTypeException exception) {
+    ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(),
+        "This username is already taken");
+    logger.debug(exception.getMessage());
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
   }
 

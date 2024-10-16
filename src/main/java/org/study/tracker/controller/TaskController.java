@@ -99,13 +99,7 @@ public class TaskController {
         .contains(Role.ROLE_USER.getName())) {
       taskForEdit = taskService.editTaskByUser(id, request.getName(), request.getDescription(),
           request.getStatus(), user.getId());
-      //if the other fields are changed - return warning about rights
 
-      //get badrequest (200 instead) when adding performer, if only this field has been changed
-      //but with others - ok. TODO add comment about parameters to be changed
-      //TODO find out why there are 200 if you don't have an access
-
-      //badrequest for editing the other person's task - ok
     } else if (user.getAuthorities().toString().replaceAll("[\\[\\]]", "")
         .contains(ROLE_GROUP_MODERATOR.getName())
         || user.getAuthorities().toString().replaceAll("[\\[\\]]", "")
@@ -116,7 +110,6 @@ public class TaskController {
     } else {
       TaskResponse taskResponse = new TaskResponse();
       return new ResponseEntity<>(taskResponse, HttpStatus.BAD_REQUEST);
-      //therefore, you're a PM and can't edit tasks
     }
     if (taskForEdit.isPresent()) {
       logger.info("Task with ID " + id + " was edited by user with ID " + user.getId());

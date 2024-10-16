@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.UniqueElements;
 
 @Data
 @AllArgsConstructor
@@ -16,6 +17,7 @@ public class SignUpRequest {
   @Size(min = 5, max = 50,
       message = "Username shall contain from 5 to 50 symbols")
   @NotBlank(message = "Username cannot be blank")
+  @UniqueElements
   private String username;
 
   @Schema(description = "Password", example = "password1!2@")

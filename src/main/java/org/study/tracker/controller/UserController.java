@@ -42,12 +42,11 @@ public class UserController {
   public ResponseEntity<UserResponse> deleteUser(@PathVariable Long id,
                                                  @AuthenticationPrincipal User user) {
     var response = new UserResponse(id);
-    if(id.equals(user.getId())) {
-      return new ResponseEntity<>(response, HttpStatus.CONFLICT); //TODO or exception with message?
-    }
-    else {
+    if (id.equals(user.getId())) {
+      return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+    } else {
       userService.deleteUser(id);
-    return new ResponseEntity<>(response, HttpStatus.OK);
+      return new ResponseEntity<>(response, HttpStatus.OK);
     }
   }
 

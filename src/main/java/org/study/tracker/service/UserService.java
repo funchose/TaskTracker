@@ -90,6 +90,7 @@ public class UserService implements UserDetailsService {
     response.setId(userId);
   }
 
+  @Transactional
   public UserResponse editUserRole(Long id, Role role) {
     Optional<User> userToEdit = userRepository.findById(id);
     if (!userToEdit.get().getRole().equals(Role.ROLE_ADMIN)) {
