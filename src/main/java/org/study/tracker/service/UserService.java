@@ -1,28 +1,60 @@
 package org.study.tracker.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.study.tracker.Role;
+import org.study.tracker.exceptions.UserNotFoundException;
 import org.study.tracker.model.User;
 import org.study.tracker.repository.UserRepository;
+import org.study.tracker.responses.TaskResponse;
+import org.study.tracker.responses.UserResponse;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
-
+public class UserService implements UserDetailsService {
+  private static final Logger logger = LoggerFactory.getLogger(UserService.class);
   private final UserRepository userRepository;
+  private final TaskService taskService;
 
-  //public List<User> getAllUsers() {
-//    return userRepository.findAll();
-//  }
-
-  public User save(User user) {
-    return userRepository.save(user);
+  @Transactional
+  public List<UserResponse> getUsers() {
+    ArrayList<UserResponse> userResponseList = new ArrayList<>();
+    List<User> users = userRepository.findAll();
+    for (User user : users) {
+      UserResponse userResponse = new UserResponse();
+      userResponse.setId(user.getId());
+      userResponse.setUsername(user.getUsername());
+      userResponse.setRole(user.getRole());
+      List<TaskResponse> taskResponseList;
+      taskResponseList = taskService.getTasks();
+      userResponse.setTasksToDoAmount(taskResponseList.stream()
+          .filter(taskResponse -> taskResponse.getPerformerId().equals(user.getId())).count());
+      userResponse.setUserTasksAmount(taskResponseList.stream()
+          .filter(taskResponse -> taskResponse.getAuthorId().equals(user.getId())).count());
+      userResponseList.add(userResponse);
+    }
+    logger.debug("List of users is received");
+    return userResponseList;
   }
 
-  public User create(User user) {
+  public UserResponse save(User user) {
+    userRepository.save(user);
+    var userResponse = new UserResponse();
+    userResponse.setId(user.getId());
+    return userResponse;
+  }
+
+  public UserResponse create(User user) {
     if (userRepository.existsByUsername(user.getUsername())) {
       throw new RuntimeException("This user already exists");
     }
@@ -43,9 +75,33 @@ public class UserService {
     return getByUsername(username);
   }
 
-//  public void getAdmin() {
-//    var user = getCurrentUser();
-//    user.setRoles(user.getRoles().add(RoleEnum.ROLE_ADMIN));
-//  }
+  @Override
+  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    return getByUsername(username);
+  }
 
+  @Transactional
+  public void deleteUser(Long userId) {
+    User userForDelete = userRepository.findById(userId)
+        .orElseThrow(() -> new UserNotFoundException(userId));
+    userRepository.delete(userForDelete);
+    logger.info("User with ID " + userId + " was deleted");
+    UserResponse response = new UserResponse();
+    response.setId(userId);
+  }
+
+  public UserResponse editUserRole(Long id, Role role) {
+    Optional<User> userToEdit = userRepository.findById(id);
+    if (!userToEdit.get().getRole().equals(Role.ROLE_ADMIN)) {
+      User user = new User();
+      user.setId(userToEdit.get().getId());
+      user.setUsername(userToEdit.get().getUsername());
+      user.setPassword(userToEdit.get().getPassword());
+      user.setRole(role);
+      userRepository.save(user);
+      return new UserResponse(id);
+    } else {
+      return new UserResponse();
+    }
+  }
 }

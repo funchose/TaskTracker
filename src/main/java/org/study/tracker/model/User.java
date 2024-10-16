@@ -60,11 +60,4 @@ public class User implements UserDetails {
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return List.of(new SimpleGrantedAuthority(role.toString()));
   }
-
-//  public static UserDetails build(User user) {
-//    List<GrantedAuthority> authorities = (List<GrantedAuthority>) user.getAuthorities()
-//    .stream().toList();
-//    return new UserDetails(user.getId(),
-//        user.getUsername(), user.getPassword(), authorities);
-//  }
 }

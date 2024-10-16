@@ -19,8 +19,8 @@ public class SignUpRequest {
   private String username;
 
   @Schema(description = "Password", example = "password1!2@")
-  @Size(min = 7, max = 255,
-      message = "Password length shall not be less than 7 and more than 255 symbols")
+  @Size(min = 7, max = 25,
+      message = "Password length shall not be less than 7 and more than 25 symbols")
   @NotBlank(message = "Password cannot be blank")
   private String password;
 }

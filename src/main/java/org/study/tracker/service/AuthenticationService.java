@@ -1,6 +1,8 @@
 package org.study.tracker.service;
 
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,6 +17,7 @@ import org.study.tracker.security.jwt.JwtService;
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
+  private static final Logger logger = LoggerFactory.getLogger(AuthenticationService.class);
 
   private final UserService userService;
   private final JwtService jwtService;
@@ -35,6 +38,7 @@ public class AuthenticationService {
         signInRequest.getUsername(),
         signInRequest.getPassword()
     ));
+    logger.info("User " + signInRequest.getUsername() + " was signed in");
     var user = userService.userDetailsService().loadUserByUsername(signInRequest.getUsername());
     var jwt = jwtService.generateToken(user);
     return new JwtResponse(jwt);

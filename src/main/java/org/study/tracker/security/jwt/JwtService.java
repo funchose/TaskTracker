@@ -3,26 +3,24 @@ package org.study.tracker.security.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import static io.jsonwebtoken.Jwts.parser;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
-import org.study.tracker.model.User;
-
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
+import org.study.tracker.model.User;
 
 
 @Service
 public class JwtService {
-  private static final Logger logger = LoggerFactory.getLogger(JwtService.class);
+  //private static final Logger logger = LoggerFactory.getLogger(JwtService.class);
 
   @Value("${security.jwt.secret}")
   private String jwtSigningKey;
@@ -67,7 +65,7 @@ public class JwtService {
   }
 
   private Claims extractAllClaims(String token) {
-    return Jwts.parser()
+    return parser()
         .setSigningKey(getSigningKey())
         .build()
         .parseClaimsJws(token)
@@ -84,13 +82,13 @@ public class JwtService {
 //      parser().setSigningKey(getSigningKey()).build().parse(authToken);
 //      return true;
 //    } catch (MalformedJwtException e) {
-//      logger.error("Invalid JWT token: {}", e.getMessage());
+//      logger.info("Invalid JWT token: {}", e.getMessage());
 //    } catch (ExpiredJwtException e) {
-//      logger.error("JWT token is expired: {}", e.getMessage());
+//      logger.info("JWT token is expired: {}", e.getMessage());
 //    } catch (UnsupportedJwtException e) {
-//      logger.error("JWT token is unsupported: {}", e.getMessage());
+//      logger.info("JWT token is unsupported: {}", e.getMessage());
 //    } catch (IllegalArgumentException e) {
-//      logger.error("JWT claims string is empty: {}", e.getMessage());
+//      logger.info("JWT claims string is empty: {}", e.getMessage());
 //    }
 //    return false;
 //  }
