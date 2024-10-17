@@ -3,6 +3,7 @@ package org.study.tracker.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.util.Optional;
 import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,9 @@ import org.study.tracker.model.User;
 import org.study.tracker.repository.UserRepository;
 import org.study.tracker.responses.UserResponse;
 
+/**
+ * Test of user service functionality.
+ */
 @SpringBootTest
 @NoArgsConstructor
 public class UserServiceTest {

@@ -26,6 +26,11 @@ public class TaskService {
   private final TaskRepository taskRepository;
   private final StatisticsCollector statisticsCollector;
 
+  /**
+   * Returns list of all existing tasks.
+   *
+   * @return List of Task objects
+   */
   public List<TaskResponse> getTasks() {
     List<TaskResponse> taskResponseList = new ArrayList<>();
     for (Task task : taskRepository.findAll()) {
@@ -40,6 +45,12 @@ public class TaskService {
     return taskResponseList;
   }
 
+  /**
+   * Returns a list of user tasks to perform.
+   *
+   * @param userId - ID of user - task performer
+   * @return list of Task objects
+   */
   @Transactional
   public List<Task> getUserTasksToDo(Long userId) {
     List<Task> taskList = taskRepository.findAll();

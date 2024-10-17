@@ -14,6 +14,9 @@ import org.study.tracker.model.User;
 import org.study.tracker.responses.UserResponse;
 import org.study.tracker.service.UserService;
 
+/**
+ * Test of user controller functionality.
+ */
 @SpringBootTest(classes = TaskTrackerApplication.class,
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class UserControllerTest {

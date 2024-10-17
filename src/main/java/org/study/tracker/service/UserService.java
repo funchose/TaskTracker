@@ -28,7 +28,7 @@ public class UserService implements UserDetailsService {
 
   /**
    * Method collects information about users: id, username, amount of tasks to perform, amount of
-   * tasks with this user as an author
+   * tasks with this user as an author.
    *
    * @return List of User Responses
    */

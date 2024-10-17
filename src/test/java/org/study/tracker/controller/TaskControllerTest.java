@@ -23,7 +23,7 @@ import org.study.tracker.service.TaskService;
 import org.study.tracker.service.UserService;
 
 /**
- * TaskController test.
+ * Test of task controller functionality.
  */
 @SpringBootTest(classes = TaskTrackerApplication.class,
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)

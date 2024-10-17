@@ -2,6 +2,7 @@ package org.study.tracker.service;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 import java.time.ZonedDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,9 @@ import org.study.tracker.repository.TaskRepository;
 import org.study.tracker.repository.UserRepository;
 import org.study.tracker.responses.UserResponse;
 
+/**
+ * Test of task service functionality.
+ */
 @SpringBootTest(classes = TaskTrackerApplication.class,
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class TaskServiceTest {
