@@ -72,7 +72,7 @@ public class TaskController {
       description = "Creates a task with non-null author id, name, description, default status"
           + "(OPEN) and current creation date")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Task is created"),
+      @ApiResponse(responseCode = "201", description = "Task is created"),
       @ApiResponse(responseCode = "403", description = "You don't have permission to perform "
           + "this operation. Please, get authorized first"),
   })
@@ -130,8 +130,12 @@ public class TaskController {
   @Transactional
   @DeleteMapping("tasks/{id}")
   @Operation(summary = "Delete a task with id",
-      description = "Deleting the task with the required id",
-      responses = @ApiResponse(responseCode = "200", description = "Task is deleted"))
+      description = "Deleting the task with the required id")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Task is deleted"),
+      @ApiResponse(responseCode = "403", description = "You don't have permission to perform "
+          + "this operation. Please, get authorized first")
+  })
   ResponseEntity<TaskResponse> deleteTask(@PathVariable Long id,
                                           @AuthenticationPrincipal User user) {
     var taskForDelete = Optional.of(new TaskResponse());
@@ -144,13 +148,13 @@ public class TaskController {
         .contains(ROLE_ADMIN.getName())) {
       taskForDelete = taskService.deleteTaskByModerator(id);
     } else {
-      return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+      return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
     if (taskForDelete.isPresent()) {
       logger.info("Task with ID " + id + " was deleted by user with ID " + user.getId());
       return new ResponseEntity<>(taskForDelete.get(), HttpStatus.OK);
     } else {
-      return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+      return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
   }
 }

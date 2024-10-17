@@ -9,7 +9,15 @@ import org.study.tracker.model.Task;
 
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Long> {
+  /**
+   * @param status - task status
+   * @return list of tasks with required status
+   */
   List<Optional<Task>> findByStatus(Status status);
 
+  /**
+   * @param name - task name in DB
+   * @return Task object
+   */
   Task findByName(String name);
 }

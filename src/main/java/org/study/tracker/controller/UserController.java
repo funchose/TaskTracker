@@ -1,6 +1,8 @@
 package org.study.tracker.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.Getter;
@@ -42,10 +44,23 @@ public class UserController {
     return userService.getUsers();
   }
 
+  /**
+   * Deletes a user by ID if current user has role ROLE_ADMIN. He can't delete himself and
+   * other users if they have tasks.
+   *
+   * @param id - ID of user to be deleted
+   * @param user - current user
+   * @return ID of deleted user
+   */
   @Transactional
   @Operation(summary = "Delete a user",
       description = "Deletes a user with required ID"
           + " if he doesn't have any tasks as author or performer")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "User is deleted"),
+      @ApiResponse(responseCode = "404", description = "User is not found"),
+      @ApiResponse(responseCode = "409", description = "Admin cannot delete himself")
+  })
   @DeleteMapping("/admin/users/{id}")
   public ResponseEntity<UserResponse> deleteUser(@PathVariable Long id,
                                                  @AuthenticationPrincipal User user) {
@@ -58,9 +73,21 @@ public class UserController {
     }
   }
 
+  /**
+   * Edits user role.
+   *
+   * @param id - ID of user whose role must be edited
+   * @param request - new Role
+   * @return - ID of user with edited Role
+   */
   @Transactional
   @Operation(summary = "Edit user role",
       description = "Edits a role of any user but not the admin himself")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "User role is deleted"),
+      @ApiResponse(responseCode = "404", description = "User is not found"),
+      @ApiResponse(responseCode = "409", description = "Admin cannot edit his own role")
+  })
   @PutMapping("/admin/users/{id}")
   public ResponseEntity<UserResponse> editUserRole(@PathVariable Long id,
                                                    @RequestBody EditUserRoleRequest request) {

@@ -1,9 +1,9 @@
 package org.study.tracker.security.jwt;
 
 
+import static io.jsonwebtoken.Jwts.parser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import static io.jsonwebtoken.Jwts.parser;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -20,7 +20,6 @@ import org.study.tracker.model.User;
 
 @Service
 public class JwtService {
-  //private static final Logger logger = LoggerFactory.getLogger(JwtService.class);
 
   @Value("${security.jwt.secret}")
   private String jwtSigningKey;
@@ -76,21 +75,4 @@ public class JwtService {
     byte[] keyBytes = Decoders.BASE64.decode(jwtSigningKey);
     return Keys.hmacShaKeyFor(keyBytes);
   }
-
-//  public boolean validateJwtToken(String authToken) {
-//    try {
-//      parser().setSigningKey(getSigningKey()).build().parse(authToken);
-//      return true;
-//    } catch (MalformedJwtException e) {
-//      logger.info("Invalid JWT token: {}", e.getMessage());
-//    } catch (ExpiredJwtException e) {
-//      logger.info("JWT token is expired: {}", e.getMessage());
-//    } catch (UnsupportedJwtException e) {
-//      logger.info("JWT token is unsupported: {}", e.getMessage());
-//    } catch (IllegalArgumentException e) {
-//      logger.info("JWT claims string is empty: {}", e.getMessage());
-//    }
-//    return false;
-//  }
-
 }

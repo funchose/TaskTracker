@@ -1,8 +1,8 @@
 package org.study.tracker.controller;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import java.time.ZonedDateTime;
 import java.util.Optional;
-import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,6 +22,9 @@ import org.study.tracker.responses.UserResponse;
 import org.study.tracker.service.TaskService;
 import org.study.tracker.service.UserService;
 
+/**
+ * TaskController test.
+ */
 @SpringBootTest(classes = TaskTrackerApplication.class,
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class TaskControllerTest {

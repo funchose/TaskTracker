@@ -156,7 +156,7 @@ public class TaskService {
     });
     for (Status status : statisticsCollector.getStatusSet()) {
       dataLines.add(new String[]{
-              "Status: " + status.name() + ", tasks: " + taskRepository.findByStatus(status)
+          "Status: " + status.name() + ", tasks: " + taskRepository.findByStatus(status)
               .stream().count() + "\n"
       });
     }

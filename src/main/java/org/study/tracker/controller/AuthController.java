@@ -24,15 +24,30 @@ public class AuthController {
   private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
   private final AuthenticationService authenticationService;
 
+  /**
+   * Registers new user.
+   *
+   * @param request - username and password
+   */
   @Transactional
   @PostMapping("/auth/sign-up")
-  @Operation(summary = "Registers a new user",
-      responses = @ApiResponse(responseCode = "200", description = "User is registered"))
+  @Operation(summary = "Registers a new user")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "User is created"),
+      @ApiResponse(responseCode = "400", description = "Username is already taken "
+          + "or parameters are invalid")
+  })
   public void signUp(@RequestBody @Valid SignUpRequest request) {
     authenticationService.signUp(request);
     logger.info("User " + request.getUsername() + " was registered");
   }
 
+  /**
+   * Authenticates user by username and password.
+   *
+   * @param request - username and password
+   * @return JWT of authenticated user
+   */
   @Transactional
   @PostMapping("/auth/sign-in")
   @Operation(summary = "Authenticates and authorizes an existing user")

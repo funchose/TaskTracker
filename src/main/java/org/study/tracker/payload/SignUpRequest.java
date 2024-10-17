@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class SignUpRequest {
   @Schema(description = "Username", example = "Bob")
   @Size(min = 2, max = 25,
-      message = "Username shall contain from 5 to 25 symbols")
+      message = "Username shall contain from 2 to 25 symbols")
   @NotBlank(message = "Username cannot be blank")
   private String username;
 

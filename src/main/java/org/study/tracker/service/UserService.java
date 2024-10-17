@@ -26,6 +26,12 @@ public class UserService implements UserDetailsService {
   private final UserRepository userRepository;
   private final TaskService taskService;
 
+  /**
+   * Method collects information about users: id, username, amount of tasks to perform, amount of
+   * tasks with this user as an author
+   *
+   * @return List of User Responses
+   */
   @Transactional
   public List<UserResponse> getUsers() {
     ArrayList<UserResponse> userResponseList = new ArrayList<>();
@@ -47,6 +53,12 @@ public class UserService implements UserDetailsService {
     return userResponseList;
   }
 
+  /**
+   * Saves the user in the DB without checking his presence.
+   *
+   * @param user - user that must be saved in the DB
+   * @return id of saved user
+   */
   public UserResponse save(User user) {
     userRepository.save(user);
     var userResponse = new UserResponse();
@@ -54,6 +66,12 @@ public class UserService implements UserDetailsService {
     return userResponse;
   }
 
+  /**
+   * Saves user in the DB with preliminary check of his presence.
+   *
+   * @param user - user that must be saved in the DB
+   * @return id of saved user
+   */
   public UserResponse create(User user) {
     if (userRepository.existsByUsername(user.getUsername())) {
       throw new UnexpectedTypeException("This user already exists");
@@ -80,16 +98,26 @@ public class UserService implements UserDetailsService {
     return getByUsername(username);
   }
 
+  /**
+   * Deletes the user from DB by ID.
+   *
+   * @param userId - ID of user to be deleted from DB
+   */
   @Transactional
   public void deleteUser(Long userId) {
     User userForDelete = userRepository.findById(userId)
         .orElseThrow(() -> new UserNotFoundException(userId));
     userRepository.delete(userForDelete);
     logger.info("User with ID " + userId + " was deleted");
-    UserResponse response = new UserResponse();
-    response.setId(userId);
   }
 
+  /**
+   * Edits role of user with ID.
+   *
+   * @param id - ID of user whose role must be edited
+   * @param role - new Role
+   * @return ID of user with edited role
+   */
   @Transactional
   public UserResponse editUserRole(Long id, Role role) {
     User userToEdit = userRepository.findById(id)

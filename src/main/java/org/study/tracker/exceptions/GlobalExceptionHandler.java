@@ -44,6 +44,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
   }
 
+  /**
+   * Exception is thrown when task with id or name is not found in the DB.
+   *
+   * @param exception - TaskNotFoundException
+   * @return Http status NOT_FOUND and error message
+   */
   @ExceptionHandler(TaskNotFoundException.class)
   public ResponseEntity<ErrorResponse> handleTaskNotFoundException(
       TaskNotFoundException exception) {
@@ -53,6 +59,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
   }
 
+  /**
+   * Exception is thrown when a user tries to delete himself or another user with existing tasks.
+   *
+   * @param exception - DataIntegrityViolationException
+   * @return Http status CONFLICT and error message
+   */
   @ExceptionHandler(DataIntegrityViolationException.class)
   public ResponseEntity<ErrorResponse>
       handleDataIntegrityViolationException(DataIntegrityViolationException exception) {
@@ -62,6 +74,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
   }
 
+  /**
+   * Exception is thrown when user with id or username is not found in the DB.
+   *
+   * @param exception - UserNotFoundException
+   * @return Http status NOT_FOUND and error message
+   */
   @ExceptionHandler(UserNotFoundException.class)
   public ResponseEntity<ErrorResponse>
       handleUserNotFoundException(UserNotFoundException exception) {
@@ -71,6 +89,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
   }
 
+  /**
+   * Exception is thrown when invalid data is entered.
+   *
+   * @param exception - InvalidDataAccessApiUsageException
+   * @return Http status BAD_REQUEST and error message
+   */
   @ExceptionHandler(InvalidDataAccessApiUsageException.class)
   public ResponseEntity<ErrorResponse>
       handleInvalidDataAccessApiUsageException(InvalidDataAccessApiUsageException exception) {
@@ -89,6 +113,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
   }
 
+  /**
+   * Exception is thrown when looked up item doesn't exist in the DB.
+   *
+   * @param exception - NoSuchElementException
+   * @return - Http status NOT_FOUND and error message
+   */
   @ExceptionHandler(NoSuchElementException.class)
   public ResponseEntity<ErrorResponse>
       handleNoSuchElementException(NoSuchElementException exception) {
