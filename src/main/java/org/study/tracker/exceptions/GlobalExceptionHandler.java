@@ -104,6 +104,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
   }
 
+  /**
+   * Handles UnexpectedTypeException.
+   *
+   * @param exception - UnexpectedTypeException
+   * @return Http status BAD_REQUEST and error message
+   */
   @ExceptionHandler(UnexpectedTypeException.class)
   public ResponseEntity<ErrorResponse>
       handleUnexpectedTypeException(UnexpectedTypeException exception) {
