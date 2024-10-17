@@ -38,7 +38,7 @@ public class UserServiceTest {
 
   /**
    * Check that the user is saved into the DB
-   * and that you can't create new user with the same username
+   * and that you can't create new user with the same username.
    */
   @Test
   public void createTest() {

@@ -55,18 +55,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
   @ExceptionHandler(DataIntegrityViolationException.class)
   public ResponseEntity<ErrorResponse>
-  handleDataIntegrityViolationException(DataIntegrityViolationException exception) {
+      handleDataIntegrityViolationException(DataIntegrityViolationException exception) {
     ErrorResponse errorResponse = new ErrorResponse(HttpStatus.CONFLICT.value(),
-        exception.getMessage()
-        + ". Before deleting the user, delete all his tasks "
-            + "or change the task author or performer");
+        exception.getMessage());
     logger.debug("User tried to delete himself or another user with existing tasks");
     return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
   }
 
   @ExceptionHandler(UserNotFoundException.class)
   public ResponseEntity<ErrorResponse>
-  handleUserNotFoundException(UserNotFoundException exception) {
+      handleUserNotFoundException(UserNotFoundException exception) {
     ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND.value(),
         exception.getMessage());
     logger.debug("User is not found");
@@ -75,7 +73,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
   @ExceptionHandler(InvalidDataAccessApiUsageException.class)
   public ResponseEntity<ErrorResponse>
-  handleInvalidDataAccessApiUsageException(InvalidDataAccessApiUsageException exception) {
+      handleInvalidDataAccessApiUsageException(InvalidDataAccessApiUsageException exception) {
     ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(),
         exception.getMessage());
     logger.debug("Data is invalid");
@@ -84,7 +82,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
   @ExceptionHandler(UnexpectedTypeException.class)
   public ResponseEntity<ErrorResponse>
-  handleUnexpectedTypeException(UnexpectedTypeException exception) {
+      handleUnexpectedTypeException(UnexpectedTypeException exception) {
     ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(),
         "This username is already taken");
     logger.debug(exception.getMessage());
@@ -93,7 +91,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
   @ExceptionHandler(NoSuchElementException.class)
   public ResponseEntity<ErrorResponse>
-  handleNoSuchElementException(NoSuchElementException exception) {
+      handleNoSuchElementException(NoSuchElementException exception) {
     ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND.value(),
         "Item doesn't exist");
     logger.debug(exception.getMessage());

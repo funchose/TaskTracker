@@ -60,8 +60,7 @@ public class Task {
     this.authorId = authorId;
     if (performerId == null) {
       this.performerId = authorId;
-    }
-    else {
+    } else {
       this.performerId = performerId;
     }
     this.creationDate = ZonedDateTime.now();

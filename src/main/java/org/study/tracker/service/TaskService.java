@@ -1,8 +1,5 @@
 package org.study.tracker.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -10,7 +7,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.study.tracker.Status;
 import org.study.tracker.exceptions.TaskNotFoundException;
 import org.study.tracker.model.Task;
@@ -39,6 +39,7 @@ public class TaskService {
     logger.debug("List of all task responses is received");
     return taskResponseList;
   }
+
   @Transactional
   public List<Task> getUserTasksToDo(Long userId) {
     List<Task> taskList = taskRepository.findAll();
@@ -97,11 +98,12 @@ public class TaskService {
 
   /**
    * Edits a task by id if you're either an author or performer of the task.
-   * @param taskId id of a task for editing
-   * @param name new task name
+   *
+   * @param taskId      id of a task for editing
+   * @param name        new task name
    * @param description new task description
-   * @param status new task status
-   * @param userId id of user who makes this request
+   * @param status      new task status
+   * @param userId      id of user who makes this request
    * @return id of the edited task.
    */
   @Transactional
@@ -110,10 +112,10 @@ public class TaskService {
     Task taskForEdit = taskRepository.findById(taskId)
         .orElseThrow(() -> new TaskNotFoundException(taskId));
     if (!(taskForEdit.getAuthorId().equals(userId)
-        ||(taskForEdit.getPerformerId().equals(userId)))) {
+        || (taskForEdit.getPerformerId().equals(userId)))) {
       return Optional.empty();
     }
-    if (name == null && description == null && status == null){
+    if (name == null && description == null && status == null) {
       return Optional.empty();
     }
     Task newTask = new Task();
@@ -154,7 +156,7 @@ public class TaskService {
     });
     for (Status status : statisticsCollector.getStatusSet()) {
       dataLines.add(new String[]{
-      "Status: " + status.name()  + ", tasks: " + taskRepository.findByStatus(status)
+              "Status: " + status.name() + ", tasks: " + taskRepository.findByStatus(status)
               .stream().count() + "\n"
       });
     }
