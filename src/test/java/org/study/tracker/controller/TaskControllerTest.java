@@ -99,6 +99,7 @@ public class TaskControllerTest {
     AddTaskRequest addRequest = new AddTaskRequest();
     addRequest.setName("name1");
     addRequest.setDescription("description1");
+    addRequest.setDeadline(ZonedDateTime.now());
     taskController.createTask(addRequest, user);
     EditTaskRequest editRequest = new EditTaskRequest();
     editRequest.setName("editedName");

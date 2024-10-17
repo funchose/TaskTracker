@@ -44,8 +44,6 @@ public class SecurityConfiguration {
           return corsConfiguration;
         }))
         .authorizeHttpRequests(request -> request
-
-
             .requestMatchers("/auth/**", "/swagger-ui/**", "/swagger-ui.html",
                 "/swagger-resources/*", "/v3/api-docs/**").permitAll()
             .requestMatchers("/tasks/statistics")
@@ -54,7 +52,7 @@ public class SecurityConfiguration {
             .requestMatchers("/tasks/**")
             .hasAnyAuthority(Role.ROLE_USER.getName(), Role.ROLE_GROUP_MODERATOR.getName(),
                 Role.ROLE_ADMIN.getName())
-            .requestMatchers( "/**", "/admin/**", "/admin/users/**")
+            .requestMatchers("/**", "/admin/**", "/admin/users/**")
             .hasAuthority(Role.ROLE_ADMIN.getName())
             .anyRequest().authenticated())
         .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))

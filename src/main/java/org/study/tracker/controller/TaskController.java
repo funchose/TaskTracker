@@ -51,8 +51,8 @@ public class TaskController {
 
   @Transactional
   @GetMapping("/tasks")
-  @Operation(summary = "Get list of all existing tasks",
-      description = "Returns a list of all tasks")
+  @Operation(summary = "Get list of users to do tasks",
+      description = "Returns a list of all user tasks to perform")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200",
           description = "List of tasks is returned"),
@@ -119,6 +119,8 @@ public class TaskController {
     }
   }
 
+  @Operation(summary = "Get statistics",
+      description = "Returns a list of tasks statuses and number of tasks with each status")
   @GetMapping("/tasks/statistics")
   void getStatistics() throws IOException {
     taskService.getStatistics();
@@ -142,13 +144,13 @@ public class TaskController {
         .contains(ROLE_ADMIN.getName())) {
       taskForDelete = taskService.deleteTaskByModerator(id);
     } else {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+      return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
     if (taskForDelete.isPresent()) {
       logger.info("Task with ID " + id + " was deleted by user with ID " + user.getId());
       return new ResponseEntity<>(taskForDelete.get(), HttpStatus.OK);
     } else {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+      return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
   }
 }

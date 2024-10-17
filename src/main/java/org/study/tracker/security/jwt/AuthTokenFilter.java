@@ -39,8 +39,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
   @Override
   protected void doFilterInternal(@NonNull HttpServletRequest request,
                                   @NonNull HttpServletResponse response,
-                                  @NonNull FilterChain filterChain) throws ServletException, IOException {
-    // try {
+                                  @NonNull FilterChain filterChain) throws ServletException,
+      IOException {
     var authHeader = request.getHeader(HEADER_NAME);
     if (StringUtils.isEmpty(authHeader) || !StringUtils.startsWithIgnoreCase(authHeader,
         BEARER_PREFIX)) {
@@ -65,13 +65,5 @@ public class AuthTokenFilter extends OncePerRequestFilter {
       }
     }
     filterChain.doFilter(request, response);
-//    } catch (ExpiredJwtException exception){
-//      resolver.resolveException(request, response, null, exception);
-//    } catch (SignatureException exception) {
-//      resolver.resolveException(request, response, null, exception);
-//    } catch (Exception exception) {
-//
-//      logger.error("Cannot set user authentication", exception);
-//    }
   }
 }

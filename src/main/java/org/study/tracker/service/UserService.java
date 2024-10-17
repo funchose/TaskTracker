@@ -1,8 +1,8 @@
 package org.study.tracker.service;
 
+import jakarta.validation.UnexpectedTypeException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +56,7 @@ public class UserService implements UserDetailsService {
 
   public UserResponse create(User user) {
     if (userRepository.existsByUsername(user.getUsername())) {
-      throw new RuntimeException("This user already exists");
+      throw new UnexpectedTypeException("This user already exists");
     }
     return save(user);
   }
@@ -92,12 +92,13 @@ public class UserService implements UserDetailsService {
 
   @Transactional
   public UserResponse editUserRole(Long id, Role role) {
-    Optional<User> userToEdit = userRepository.findById(id);
-    if (!userToEdit.get().getRole().equals(Role.ROLE_ADMIN)) {
+    User userToEdit = userRepository.findById(id)
+        .orElseThrow(() -> new UserNotFoundException(id));
+    if (!userToEdit.getRole().equals(Role.ROLE_ADMIN)) {
       User user = new User();
-      user.setId(userToEdit.get().getId());
-      user.setUsername(userToEdit.get().getUsername());
-      user.setPassword(userToEdit.get().getPassword());
+      user.setId(userToEdit.getId());
+      user.setUsername(userToEdit.getUsername());
+      user.setPassword(userToEdit.getPassword());
       user.setRole(role);
       userRepository.save(user);
       return new UserResponse(id);

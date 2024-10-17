@@ -2,6 +2,7 @@ package org.study.tracker.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -34,8 +35,11 @@ public class AuthController {
 
   @Transactional
   @PostMapping("/auth/sign-in")
-  @Operation(summary = "Authenticates and authorizes an existing user",
-      responses = @ApiResponse(responseCode = "200", description = "User is signed in"))
+  @Operation(summary = "Authenticates and authorizes an existing user")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "User is signed in"),
+      @ApiResponse(responseCode = "403", description = "User entered incorrect data"),
+  })
   public JwtResponse signIn(@RequestBody @Valid SignInRequest request) {
     return authenticationService.signIn(request);
   }

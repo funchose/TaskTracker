@@ -4,6 +4,7 @@ import jakarta.validation.UnexpectedTypeException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,17 +91,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
   }
 
-//  @ExceptionHandler(value = {SignatureException.class})
-//  public ResponseEntity<ErrorResponse> handleSignatureException(SignatureException exception) {
-//    ErrorResponse errorResponse = new ErrorResponse(HttpStatus.UNAUTHORIZED.value(),
-//        exception.getMessage());
-//    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
-//  }
-//  @ExceptionHandler(value = {ExpiredJwtException.class})
-//  public ResponseEntity<ErrorResponse> handleExpiredJwtException(SignatureException exception) {
-//    ErrorResponse errorResponse = new ErrorResponse(HttpStatus.FORBIDDEN.value(),
-//        exception.getMessage());
-//    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
-//  }
+  @ExceptionHandler(NoSuchElementException.class)
+  public ResponseEntity<ErrorResponse>
+  handleNoSuchElementException(NoSuchElementException exception) {
+    ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND.value(),
+        "Item doesn't exist");
+    logger.debug(exception.getMessage());
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+  }
 }
 

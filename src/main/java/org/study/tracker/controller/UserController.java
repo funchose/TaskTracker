@@ -1,5 +1,7 @@
 package org.study.tracker.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ import org.study.tracker.service.UserService;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Operations with users")
 @Getter
 @Setter
 public class UserController {
@@ -32,12 +35,17 @@ public class UserController {
   private final JwtService jwtService;
 
   @Transactional
+  @Operation(summary = "Get list of all users",
+      description = "Returns a list of all users")
   @GetMapping("/admin/users")
   public List<UserResponse> getUsers() {
     return userService.getUsers();
   }
 
   @Transactional
+  @Operation(summary = "Delete a user",
+      description = "Deletes a user with required ID"
+          + " if he doesn't have any tasks as author or performer")
   @DeleteMapping("/admin/users/{id}")
   public ResponseEntity<UserResponse> deleteUser(@PathVariable Long id,
                                                  @AuthenticationPrincipal User user) {
@@ -51,6 +59,8 @@ public class UserController {
   }
 
   @Transactional
+  @Operation(summary = "Edit user role",
+      description = "Edits a role of any user but not the admin himself")
   @PutMapping("/admin/users/{id}")
   public ResponseEntity<UserResponse> editUserRole(@PathVariable Long id,
                                                    @RequestBody EditUserRoleRequest request) {
