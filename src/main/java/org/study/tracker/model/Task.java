@@ -3,12 +3,11 @@ package org.study.tracker.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.time.ZonedDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.study.tracker.Status;
-
-import java.time.ZonedDateTime;
 
 @Data
 @Entity
@@ -44,11 +43,11 @@ public class Task {
   /**
    * Creates a task with status OPEN and creation date equal the current moment of time.
    *
-   * @param id the task id
-   * @param authorId the task author id (by default - the task creator, can't be changed)
-   * @param name short name of the task
+   * @param id          the task id
+   * @param authorId    the task author id (by default - the task creator, can't be changed)
+   * @param name        short name of the task
    * @param description full name of the task or full description what must be done
-   * @param deadline the task due date
+   * @param deadline    the task due date
    * @param performerId person who will perform the task
    */
   public Task(Long id, Long authorId, String name, String description, ZonedDateTime deadline,
@@ -59,7 +58,11 @@ public class Task {
     this.status = Status.OPEN;
     this.id = id;
     this.authorId = authorId;
-    this.performerId = performerId;
+    if (performerId == null) {
+      this.performerId = authorId;
+    } else {
+      this.performerId = performerId;
+    }
     this.creationDate = ZonedDateTime.now();
   }
 }

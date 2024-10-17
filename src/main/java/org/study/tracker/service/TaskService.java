@@ -1,8 +1,16 @@
 package org.study.tracker.service;
 
-import jakarta.transaction.Transactional;
+import java.io.IOException;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.study.tracker.Status;
 import org.study.tracker.exceptions.TaskNotFoundException;
 import org.study.tracker.model.Task;
@@ -11,20 +19,45 @@ import org.study.tracker.repository.TaskRepository;
 import org.study.tracker.responses.TaskResponse;
 import org.study.tracker.utils.StatisticsCollector;
 
-import java.io.IOException;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class TaskService {
+  private static final Logger logger = LoggerFactory.getLogger(TaskService.class);
   private final TaskRepository taskRepository;
   private final StatisticsCollector statisticsCollector;
 
-  public List<Task> getTasks() {
-    return taskRepository.findAll();
+  /**
+   * Returns list of all existing tasks.
+   *
+   * @return List of Task objects
+   */
+  public List<TaskResponse> getTasks() {
+    List<TaskResponse> taskResponseList = new ArrayList<>();
+    for (Task task : taskRepository.findAll()) {
+      TaskResponse taskResponse = new TaskResponse();
+      taskResponse.setId(task.getId());
+      taskResponse.setName(task.getName());
+      taskResponse.setAuthorId(task.getAuthorId());
+      taskResponse.setPerformerId(task.getPerformerId());
+      taskResponseList.add(taskResponse);
+    }
+    logger.debug("List of all task responses is received");
+    return taskResponseList;
+  }
+
+  /**
+   * Returns a list of user tasks to perform.
+   *
+   * @param userId - ID of user - task performer
+   * @return list of Task objects
+   */
+  @Transactional
+  public List<Task> getUserTasksToDo(Long userId) {
+    List<Task> taskList = taskRepository.findAll();
+    var list = taskList.stream().filter(task -> task.getPerformerId().equals(userId))
+        .collect(Collectors.toList());
+    logger.debug("List of user's tasks is received");
+    return list;
   }
 
   @Transactional
@@ -39,73 +72,89 @@ public class TaskService {
   public Optional<TaskResponse> editTaskByModerator(Long taskId, String name, Long performerId,
                                                     String description, ZonedDateTime deadline,
                                                     Status status) {
-    Optional<Task> taskForEdit = taskRepository.findById(taskId);
+    Task taskForEdit = taskRepository.findById(taskId)
+        .orElseThrow(() -> new TaskNotFoundException(taskId));
     Task newTask = new Task();
-    newTask.setCreationDate(taskForEdit.get().getCreationDate());
-    newTask.setId(taskForEdit.get().getId());
-    newTask.setAuthorId(taskForEdit.get().getAuthorId());
+    newTask.setCreationDate(taskForEdit.getCreationDate());
+    newTask.setId(taskForEdit.getId());
+    newTask.setAuthorId(taskForEdit.getAuthorId());
     if (name != null) {
       newTask.setName(name);
     } else {
-      newTask.setName(taskForEdit.get().getName());
+      newTask.setName(taskForEdit.getName());
     }
     if (performerId != null) {
       newTask.setPerformerId(performerId);
     } else {
-      newTask.setPerformerId(taskForEdit.get().getPerformerId());
+      newTask.setPerformerId(taskForEdit.getPerformerId());
     }
     if (description != null) {
       newTask.setDescription(description);
     } else {
-      newTask.setDescription(taskForEdit.get().getDescription());
+      newTask.setDescription(taskForEdit.getDescription());
     }
     if (deadline != null) {
       newTask.setDeadline(deadline);
     } else {
-      newTask.setDeadline(taskForEdit.get().getDeadline());
+      newTask.setDeadline(taskForEdit.getDeadline());
     }
     if (status != null) {
       newTask.setStatus(status);
     } else {
-      newTask.setStatus(taskForEdit.map(Task.class::cast).get().getStatus());
+      newTask.setStatus(taskForEdit.getStatus());
     }
-    var task = taskForEdit.map(value -> taskRepository.save(newTask));
+    taskRepository.save(newTask);
     return Optional.of(new TaskResponse(newTask.getId()));
   }
 
+  /**
+   * Edits a task by id if you're either an author or performer of the task.
+   *
+   * @param taskId      id of a task for editing
+   * @param name        new task name
+   * @param description new task description
+   * @param status      new task status
+   * @param userId      id of user who makes this request
+   * @return id of the edited task.
+   */
   @Transactional
   public Optional<TaskResponse> editTaskByUser(Long taskId, String name, String description,
                                                Status status, Long userId) {
-    Optional<Task> taskForEdit = taskRepository.findById(taskId);
-    if (!taskForEdit.get().getAuthorId().equals(userId)) {
+    Task taskForEdit = taskRepository.findById(taskId)
+        .orElseThrow(() -> new TaskNotFoundException(taskId));
+    if (!(taskForEdit.getAuthorId().equals(userId)
+        || (taskForEdit.getPerformerId().equals(userId)))) {
+      return Optional.empty();
+    }
+    if (name == null && description == null && status == null) {
       return Optional.empty();
     }
     Task newTask = new Task();
-    newTask.setCreationDate(taskForEdit.get().getCreationDate());
-    newTask.setId(taskForEdit.get().getId());
-    newTask.setAuthorId(taskForEdit.get().getAuthorId());
+    newTask.setCreationDate(taskForEdit.getCreationDate());
+    newTask.setId(taskForEdit.getId());
+    newTask.setAuthorId(taskForEdit.getAuthorId());
     if (name != null) {
       newTask.setName(name);
     } else {
-      newTask.setName(taskForEdit.get().getName());
+      newTask.setName(taskForEdit.getName());
     }
     if (description != null) {
       newTask.setDescription(description);
     } else {
-      newTask.setDescription(taskForEdit.get().getDescription());
+      newTask.setDescription(taskForEdit.getDescription());
     }
     if (status != null) {
       newTask.setStatus(status);
     } else {
-      newTask.setStatus(taskForEdit.map(Task.class::cast).get().getStatus());
+      newTask.setStatus(taskForEdit.getStatus());
     }
-    if (taskForEdit.get().getPerformerId() != null) {
-      newTask.setPerformerId(taskForEdit.get().getPerformerId());
+    if (taskForEdit.getPerformerId() != null) {
+      newTask.setPerformerId(taskForEdit.getPerformerId());
     }
-    if (taskForEdit.get().getDeadline() != null) {
-      newTask.setDeadline(taskForEdit.get().getDeadline());
+    if (taskForEdit.getDeadline() != null) {
+      newTask.setDeadline(taskForEdit.getDeadline());
     }
-    var task = taskForEdit.map(value -> taskRepository.save(newTask));
+    taskRepository.save(newTask);
     return Optional.of(new TaskResponse(newTask.getId()));
   }
 
@@ -132,11 +181,11 @@ public class TaskService {
     if (taskForDelete.getAuthorId().equals(userId)) {
       taskRepository.delete(taskForDelete);
       return Optional.of(new TaskResponse(id));
-    }
-    else {
+    } else {
       return Optional.empty();
     }
   }
+
   @Transactional
   public Optional<TaskResponse> deleteTaskByModerator(Long id) {
     Task taskForDelete = taskRepository.findById(id)

@@ -23,6 +23,8 @@ public class AddTaskRequest {
   @NotNull(message = "Task description cannot be null")
   @NotEmpty(message = "Task description cannot be empty")
   private String description;
+  @Schema(description = "Status", example = "OPEN, IN_PROGRESS, DONE, UNDER_REVIEW,"
+      + "REJECTED, REOPENED, CLOSED")
   private Status status;
   private ZonedDateTime deadline;
 }

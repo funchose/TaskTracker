@@ -1,5 +1,8 @@
 package org.study.tracker.security;
 
+import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
+
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,10 +22,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.study.tracker.Role;
 import org.study.tracker.security.jwt.AuthTokenFilter;
 import org.study.tracker.service.UserService;
-
-import java.util.List;
-
-import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
 @EnableWebSecurity
@@ -46,13 +45,15 @@ public class SecurityConfiguration {
           return corsConfiguration;
         }))
         .authorizeHttpRequests(request -> request
-
-            .requestMatchers("/auth/**").permitAll()
-            .requestMatchers("/swagger-ui/**", "/swagger-ui.html",
+            .requestMatchers("/auth/**", "/swagger-ui/**", "/swagger-ui.html",
                 "/swagger-resources/*", "/v3/api-docs/**").permitAll()
             .requestMatchers("/tasks/statistics")
-            .hasAuthority(Role.ROLE_PROJECT_MANAGER.getName())
-            .requestMatchers("/endpoint", "/admin/**")
+            .hasAnyAuthority(Role.ROLE_PROJECT_MANAGER.getName(),
+                Role.ROLE_ADMIN.getName())
+            .requestMatchers("/tasks/**")
+            .hasAnyAuthority(Role.ROLE_USER.getName(), Role.ROLE_GROUP_MODERATOR.getName(),
+                Role.ROLE_ADMIN.getName())
+            .requestMatchers("/**", "/admin/**", "/admin/users/**")
             .hasAuthority(Role.ROLE_ADMIN.getName())
             .anyRequest().authenticated())
         .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
@@ -66,7 +67,6 @@ public class SecurityConfiguration {
     return new BCryptPasswordEncoder();
   }
 
-  @Bean
   public AuthenticationProvider authenticationProvider() {
     var authProvider = new DaoAuthenticationProvider();
     authProvider.setUserDetailsService(userService.userDetailsService());
