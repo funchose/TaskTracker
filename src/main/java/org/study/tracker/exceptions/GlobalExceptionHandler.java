@@ -1,5 +1,7 @@
 package org.study.tracker.exceptions;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.UnexpectedTypeException;
 import java.util.HashMap;
 import java.util.List;
@@ -66,8 +68,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
    * @return Http status CONFLICT and error message
    */
   @ExceptionHandler(DataIntegrityViolationException.class)
-  public ResponseEntity<ErrorResponse>
-      handleDataIntegrityViolationException(DataIntegrityViolationException exception) {
+  public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(
+      DataIntegrityViolationException exception) {
     ErrorResponse errorResponse = new ErrorResponse(HttpStatus.CONFLICT.value(),
         exception.getMessage());
     logger.debug("User tried to delete himself or another user with existing tasks");
@@ -81,8 +83,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
    * @return Http status NOT_FOUND and error message
    */
   @ExceptionHandler(UserNotFoundException.class)
-  public ResponseEntity<ErrorResponse>
-      handleUserNotFoundException(UserNotFoundException exception) {
+  public ResponseEntity<ErrorResponse> handleUserNotFoundException(
+      UserNotFoundException exception) {
     ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND.value(),
         exception.getMessage());
     logger.debug("User is not found");
@@ -96,8 +98,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
    * @return Http status BAD_REQUEST and error message
    */
   @ExceptionHandler(InvalidDataAccessApiUsageException.class)
-  public ResponseEntity<ErrorResponse>
-      handleInvalidDataAccessApiUsageException(InvalidDataAccessApiUsageException exception) {
+  public ResponseEntity<ErrorResponse> handleInvalidDataAccessApiUsageException(
+      InvalidDataAccessApiUsageException exception) {
     ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(),
         exception.getMessage());
     logger.debug("Data is invalid");
@@ -111,8 +113,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
    * @return Http status BAD_REQUEST and error message
    */
   @ExceptionHandler(UnexpectedTypeException.class)
-  public ResponseEntity<ErrorResponse>
-      handleUnexpectedTypeException(UnexpectedTypeException exception) {
+  public ResponseEntity<ErrorResponse> handleUnexpectedTypeException(
+      UnexpectedTypeException exception) {
     ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(),
         "This username is already taken");
     logger.debug(exception.getMessage());
@@ -126,12 +128,29 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
    * @return - Http status NOT_FOUND and error message
    */
   @ExceptionHandler(NoSuchElementException.class)
-  public ResponseEntity<ErrorResponse>
-      handleNoSuchElementException(NoSuchElementException exception) {
+  public ResponseEntity<ErrorResponse> handleNoSuchElementException(
+      NoSuchElementException exception) {
     ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND.value(),
         "Item doesn't exist");
     logger.debug(exception.getMessage());
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+  }
+
+  /**
+   * Exception is thrown when user doesn't input the required data for task creation.
+   *
+   * @param ex - ConstraintViolationException
+   * @return list of exception messages
+   */
+  @ExceptionHandler(ConstraintViolationException.class)
+  public ResponseEntity<Object> handleConstraintViolationException(
+      ConstraintViolationException ex) {
+    Map<String, List<String>> body = new HashMap<>();
+    List<String> errors = ex.getConstraintViolations().stream()
+        .map(ConstraintViolation::getMessage).collect(Collectors.toList());
+    body.put("errors", errors);
+    logger.debug("Some arguments are not valid: " + errors);
+    return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
   }
 }
 

@@ -59,7 +59,8 @@ public class UserController {
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "User is deleted"),
       @ApiResponse(responseCode = "404", description = "User is not found"),
-      @ApiResponse(responseCode = "409", description = "Admin cannot delete himself")
+      @ApiResponse(responseCode = "409", description = "Admin cannot delete himself "
+          + " or other users with existing tasks")
   })
   @DeleteMapping("/admin/users/{id}")
   public ResponseEntity<UserResponse> deleteUser(@PathVariable Long id,
@@ -84,7 +85,7 @@ public class UserController {
   @Operation(summary = "Edit user role",
       description = "Edits a role of any user but not the admin himself")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "User role is deleted"),
+      @ApiResponse(responseCode = "200", description = "User role is edited"),
       @ApiResponse(responseCode = "404", description = "User is not found"),
       @ApiResponse(responseCode = "409", description = "Admin cannot edit his own role")
   })
